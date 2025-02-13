@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nony -Board</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="nony-text">Nony</h1>
+      <div class="heart">❤</div>
+      <p class="ghazal-text">
+        Hey Nony,<br>
+        I just wanted to say... you're amazing! 🌟<br>
+        Your smile brightens up my day, and your laugh is like music to my ears.<br>
+        I feel so lucky to know you, and I hope we can make more memories together.<br>
+        You're not just a friend to me, you're someone really special. 💖
+      </p>
+      <a href="https://i.pinimg.com/564x/2a/a2/dd/2aa2dd5685995019c6547ed3a81a8298.jpg" target="_blank" class="capture-button">
+        If you want to see me, click here
+      </a>
+    </header>
+
+    <section class="messages-section">
+      <h2>Messages</h2>
+      <div id="messages" class="messages"></div>
+    </section>
+
+    <section class="form-section">
+      <h2>Leave a Message</h2>
+      <div id="status" class="status"></div>
+      <form id="messageForm">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <!-- حقل مخفي لتخزين عنوان IP -->
+        <input type="hidden" name="ip" id="ip">
+        <button type="submit" id="submitBtn">Send Message</button>
+      </form>
+    </section>
+  </div>
+
+  <!-- Twinkling Stars Effect -->
+  <div class="stars"></div>
+  <div class="stars"></div>
+  <div class="stars"></div>
+
+  <script>
+    // رابط تطبيق Google Apps Script Web App (تأكد من صحته)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwFshYEKm1KPKjrgxYlHZIc3rjs5mPbP_Xr7lTTx5NruUhPBS90Kx5RZUAainhdGq3v/exec';
+
+    // جلب عنوان IP باستخدام خدمة ipify ووضعه في الحقل المخفي
+    function fetchIP() {
+      fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('ip').value = data.ip;
+        })
+        .catch(error => console.error('Error fetching IP:', error));
+    }
+
+    // جلب الرسائل باستخدام JSONP لتجاوز مشكلة CORS
+    function fetchMessages() {
+      // إزالة السكريبت القديم إذا وُجد
+      const oldScript = document.getElementById('jsonpScript');
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement('script');
+      script.id = 'jsonpScript';
+      // إضافة معامل callback لتلقي البيانات في الدالة handleMessages
+      script.src = scriptURL + "?callback=handleMessages";
+      document.body.appendChild(script);
+    }
+
+    // الدالة التي تُستدعى عند جلب الرسائل (JSONP callback)
+    function handleMessages(data) {
+      const messagesContainer = document.getElementById('messages');
+      messagesContainer.innerHTML = "";
+      data.forEach(item => {
+        const relativeTime = formatRelativeTime(item.Timestamp);
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.innerHTML = `
+          <div class="message-header">
+            <strong>${item.Name}</strong>
+            <span class="timestamp">${relativeTime}</span>
+          </div>
+          <div class="message-body">
+            ${item.Message}
+          </div>
+        `;
+        messagesContainer.appendChild(messageElement);
+      });
+    }
+
+    // دالة لتنسيق التوقيت بشكل نسبي (مثال: "5 minutes ago", "2 hours ago", ...)
+    function formatRelativeTime(ts) {
+      if (!ts) return "";
+      const now = new Date();
+      const past = new Date(ts);
+      const diff = now - past; // الفرق بالميلي ثانية
+      const seconds = Math.floor(diff / 1000);
+      const minutes = Math.floor(diff / (1000 * 60));
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(days / 7);
+      const months = Math.floor(days / 30);
+      const years = Math.floor(days / 365);
+      
+      if (seconds < 60) return seconds + " seconds ago";
+      else if (minutes < 60) return minutes + " minutes ago";
+      else if (hours < 24) return hours + " hours ago";
+      else if (days < 7) return days + " days ago";
+      else if (weeks < 5) return weeks + " weeks ago";
+      else if (months < 12) return months + " months ago";
+      else return years + " years ago";
+    }
+
+    // عند تحميل الصفحة، يتم جلب IP والرسائل
+    window.onload = function() {
+      fetchIP();
+      fetchMessages();
+    };
+
+    // معالجة إرسال النموذج مع منع الضغط المتكرر على الزر
+    const form = document.getElementById('messageForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusDiv = document.getElementById('status');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      statusDiv.textContent = "Sending message...";
+
+      const formData = new FormData(form);
+      fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors', // استخدام no-cors لتجاوز مشكلة CORS (الاستجابة ستكون opaque)
+        body: formData
+      })
+      .then(() => {
+        statusDiv.textContent = "Your message was sent successfully!";
+        form.reset();
+        fetchIP();      // تحديث IP للرسالة التالية
+        fetchMessages(); // تحديث قائمة الرسائل
+        setTimeout(() => {
+          statusDiv.textContent = "";
+          submitBtn.disabled = false;
+        }, 3000);
+      })
+      .catch(error => {
+        console.error('Error sending message:', error);
+        statusDiv.textContent = "There was an error sending your message. Please try again.";
+        submitBtn.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>
