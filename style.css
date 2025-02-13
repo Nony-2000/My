@@ -1,0 +1,195 @@
+/* General Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #00004d, #000033);
+  font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.nony-text {
+  font-size: 2.5em;
+  margin: 0;
+  color: #ff99cc;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px #ff99cc; }
+  to { text-shadow: 0 0 20px #ff66b2; }
+}
+
+.heart {
+  font-size: 3em;
+  color: #ff3366;
+  margin: 10px 0;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.ghazal-text {
+  font-size: 1em;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+.capture-button {
+  display: inline-block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  background: #4b0082;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.capture-button:hover {
+  background: #6a1b9a;
+}
+
+/* Messages Section */
+.messages-section {
+  margin-bottom: 20px;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 5px;
+  overflow-wrap: break-word;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.timestamp {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.message-body {
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+
+/* Form Section */
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.form-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-section input[type="text"],
+.form-section textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.form-section button {
+  padding: 10px;
+  background: #4b0082;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.form-section button:disabled {
+  background: #777;
+  cursor: not-allowed;
+}
+
+.form-section button:hover:not(:disabled) {
+  background: #6a1b9a;
+}
+
+.status {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+/* Stars Effect */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .nony-text { font-size: 2em; }
+  .heart { font-size: 2.5em; }
+  .ghazal-text { font-size: 0.9em; }
+  .container { padding: 15px; }
+}
